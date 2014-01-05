@@ -1,0 +1,45 @@
+<VirtualHost *:80>
+	ServerName orchard-linux.cloudapp.net
+	ServerAdmin webmaster@localhost
+	DocumentRoot /var/orchard/src/Orchard.Web
+
+
+	MonoSetEnv MONO_IOMAP=all
+	MonoIOMAP orchard-linux.cloudapp.net all
+    	MonoDebug true
+#http://manpages.ubuntu.com/manpages/precise/man8/mod_mono.8.html
+# MonoMaxMemory orchard-linux.cloudapp.net 300000000
+# MonoMaxCPUTime orchard-linux.cloudapp.net 3600
+        MonoServerPath orchard-linux.cloudapp.net "/usr/local/bin/mod-mono-server4"
+        MonoDebug orchard-linux.cloudapp.net true
+        MonoSetEnv orchard-linux.cloudapp.net MONO_IOMAP=all
+        MonoApplications orchard-linux.cloudapp.net "/:/var/orchard/src/Orchard.Web"
+        AddMonoApplications orchard-linux.cloudapp.net "/:/var/orchard/src/Orchard.Web"
+
+  <Location "/">
+    Allow from all
+    Order allow,deny
+    SetHandler mono
+	MonoSetServerAlias orchard-linux.cloudapp.net
+ AddHandler mono .aspx .ascx .asax .ashx .config .cs .asmx .axd
+  </Location>
+
+
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+
+	# Possible values include: debug, info, notice, warn, error, crit,
+	# alert, emerg.
+	LogLevel warn
+
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    Alias /doc/ "/usr/share/doc/"
+    <Directory "/usr/share/doc/">
+        Options Indexes MultiViews FollowSymLinks
+        AllowOverride None
+        Order deny,allow
+        Deny from all
+        Allow from 127.0.0.0/255.0.0.0 ::1/128
+    </Directory>
+
+</VirtualHost>
